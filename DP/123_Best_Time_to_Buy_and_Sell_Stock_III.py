@@ -40,6 +40,7 @@ class Solution:
         print("left: ", left)
 
         # Duyệt từ phải qua trai, tìm lọi nhuận lớn nất từ i đến n
+        # Duyệt ngược và lắp ngược
         max_price = prices[n-1]
         for i in range(n-2, -1, -1):
              max_price = max(max_price, prices[i])
