@@ -103,7 +103,6 @@ class DecisionTree:
         return self._traverse_tree(x, node.right)
 
 
-
 if __name__ == "__main__":
     Decisiontree = DecisionTree()
     X_train_tree = None

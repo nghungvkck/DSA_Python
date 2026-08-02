@@ -6,7 +6,7 @@ Repo này được xây dựng với mục đích tìm hiểu và khám phá t�
 🎯 Mục đích
 Học tập và nghiên cứu: Hiểu sâu về toán học và thuật toán đằng sau các mô hình thuật toán
 
-Tài liệu tham khảo: Code sưu tầm và tự viết để dùng cho các dự án sau này
+Tài liệu tham khảo: Code sưu tầm để dùng cho các dự án sau này
 
 Thực hành: Áp dụng kiến thức vào các bài toán thực tế
 
