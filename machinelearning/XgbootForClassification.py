@@ -8,7 +8,7 @@ from collections import Counter
 class RegressionTree:
     def __init__(self, max_depth=3, min_samples_split=5, lambda_reg=1.0, gamma=0.0):
         self.max_depth = max_depth
-        self.min_samples_split = min_samples_split
+        self.min_samples_split = min_samples_split  
         self.lambda_reg = lambda_reg  # L2 regularization
         self.gamma = gamma            # min loss reduction for split
         self.root = None

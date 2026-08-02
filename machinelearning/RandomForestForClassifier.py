@@ -1,3 +1,6 @@
+# -------------------------------------------------
+# Decision Tree (hỗ trợ random feature subset)
+# -------------------------------------------------
 import math
 import random
 from collections import Counter
@@ -47,6 +50,7 @@ class DecisionTreeClassifier:
             values = sorted(set(X[i][feat] for i in range(n_samples)))
             for i in range(len(values) - 1):
                 threshold = (values[i] + values[i+1]) / 2.0
+
                 left_idx = [idx for idx in range(n_samples) if X[idx][feat] <= threshold]
                 right_idx = [idx for idx in range(n_samples) if X[idx][feat] > threshold]
 
@@ -66,6 +70,7 @@ class DecisionTreeClassifier:
 
         if best_gain < self.min_impurity_decrease:
             return None
+
         return best_feature, best_threshold, best_left_idx, best_right_idx
 
     def _build_tree(self, X, y, depth):
@@ -88,6 +93,7 @@ class DecisionTreeClassifier:
             return {'leaf': True, 'class': leaf_value, 'n_samples': n_samples}
 
         feature, threshold, left_idx, right_idx = split
+
         X_left = [X[i] for i in left_idx]
         y_left = [y[i] for i in left_idx]
         X_right = [X[i] for i in right_idx]
@@ -106,8 +112,17 @@ class DecisionTreeClassifier:
 
     def fit(self, X, y):
         self.n_features = len(X[0]) if X else 0
+
+        # ✅ FIX: xử lý max_features dạng string giống sklearn
         if self.max_features is None:
-            self.max_features = int(math.sqrt(self.n_features))  # mặc định sqrt
+            self.max_features = int(math.sqrt(self.n_features))
+        elif self.max_features == 'sqrt':
+            self.max_features = int(math.sqrt(self.n_features))
+        elif self.max_features == 'log2':
+            self.max_features = int(math.log2(self.n_features))
+        elif isinstance(self.max_features, float):
+            self.max_features = int(self.max_features * self.n_features)
+
         self.tree = self._build_tree(X, y, 0)
 
     def _predict_one(self, node, x):
@@ -138,6 +153,7 @@ class RandomForestClassifier:
         self.bootstrap = bootstrap
         self.max_samples = max_samples  # kích thước bootstrap sample (mặc định = n_samples)
         self.trees = []
+        self.classes_ = None  # ✅ FIX: lưu danh sách class
 
     def _bootstrap_sample(self, X, y):
         n = len(X)
@@ -149,6 +165,8 @@ class RandomForestClassifier:
 
     def fit(self, X, y):
         self.trees = []
+        self.classes_ = sorted(set(y))  # ✅ FIX
+
         for _ in range(self.n_estimators):
             # Lấy bootstrap sample
             if self.bootstrap:
@@ -172,13 +190,14 @@ class RandomForestClassifier:
         all_preds = []
         for tree in self.trees:
             all_preds.append(tree.predict(X))
-        # Chuyển vị để mỗi mẫu nhận danh sách dự đoán từ các cây
+
         n_samples = len(X)
         final_preds = []
         for i in range(n_samples):
             votes = [all_preds[t][i] for t in range(len(self.trees))]
             majority_class = Counter(votes).most_common(1)[0][0]
             final_preds.append(majority_class)
+
         return final_preds
 
     def predict_proba(self, X):
@@ -186,15 +205,18 @@ class RandomForestClassifier:
         all_preds = []
         for tree in self.trees:
             all_preds.append(tree.predict(X))
+
         n_samples = len(X)
         probas = []
+
         for i in range(n_samples):
             votes = [all_preds[t][i] for t in range(len(self.trees))]
-            # Lấy các lớp duy nhất
-            classes = sorted(set(votes))
-            prob = [votes.count(c) / len(votes) for c in classes]
-            # Đơn giản: coi các lớp là 0,1,... (có thể điều chỉnh nếu cần mapping)
-            probas.append(prob if len(classes) > 1 else [1.0])
+
+            # ✅ FIX: dùng class cố định
+            prob = [votes.count(c) / len(votes) for c in self.classes_]
+
+            probas.append(prob)
+
         return probas
 
 

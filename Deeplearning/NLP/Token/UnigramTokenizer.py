@@ -185,6 +185,6 @@ if __name__ == "__main__":
     for sw, p in sorted_probs[:5]:
         print(f"  {repr(sw)}: {p:.4f}")
 
-    test_sentence = "lower newer low"
+    test_sentence = "Real growth requires vision. Zebra has the automation technology and the deep industry expertise to improve every step in your manufacturing or distribution supply chain. Align your business with the industry’s most advanced and growing fixed scanning and machine vision portfolio."
     print(f"\nTokenize '{test_sentence}':")
     print(tokenizer.tokenize(test_sentence))
